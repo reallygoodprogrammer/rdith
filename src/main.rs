@@ -32,6 +32,10 @@ struct Args {
         help = "resolution of dithering matrix"
     )]
     res_matrix: usize,
+    #[arg(long, help = "output image width")]
+    width: Option<u32>,
+    #[arg(long, help = "output image height")]
+    height: Option<u32>,
 }
 
 fn main() {
@@ -44,6 +48,20 @@ fn main() {
     let mut in_file = open(args.input_files[0].clone())
         .expect("could not open input file")
         .to_rgba8();
+
+    if args.width.is_some() || args.height.is_some() {
+        let original_dims = in_file.dimensions();
+        let w = match args.width {
+            Some(width) => width,
+            None => original_dims.0,
+        };
+        let h = match args.height {
+            Some(height) => height,
+            None => original_dims.1,
+        };
+        in_file = resize(&in_file, w, h, Lanczos3);
+    }
+
     if args.predith {
         in_file = black_dither(in_file, create_matrix(args.dims_matrix, args.res_matrix));
     }

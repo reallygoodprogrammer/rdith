@@ -20,5 +20,7 @@ Options:
       --predith                    predither the background layer
   -d, --dims-matrix <DIMS_MATRIX>  dimensions of dithering matrix [default: 5]
   -r, --res-matrix <RES_MATRIX>    resolution of dithering matrix [default: 1]
+      --width <WIDTH>              output image width
+      --height <HEIGHT>            output image height
   -h, --help                       Print help
 ```
