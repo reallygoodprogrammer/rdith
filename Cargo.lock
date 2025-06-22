@@ -414,15 +414,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
-name = "idith"
-version = "0.1.0"
-dependencies = [
- "clap",
- "image",
- "rand 0.9.1",
-]
-
-[[package]]
 name = "image"
 version = "0.25.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -885,6 +876,15 @@ checksum = "1465873a3dfdaa8ae7cb14b4383657caab0b3e8a0aa9ae8e04b044854c8dfce2"
 dependencies = [
  "crossbeam-deque",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "rdith"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "image",
+ "rand 0.9.1",
 ]
 
 [[package]]
