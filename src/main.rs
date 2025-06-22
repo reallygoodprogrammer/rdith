@@ -1,6 +1,6 @@
 //! # rdith
 //!
-//! tool for manipulating images through dithering operations.
+//! tool for layering images through dithering.
 
 use clap::Parser;
 use image::{
@@ -37,6 +37,10 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
+    if args.input_files.is_empty() {
+        eprintln!("no file(s) specified")
+    }
+
     let mut in_file = open(args.input_files[0].clone())
         .expect("could not open input file")
         .to_rgba8();
@@ -45,12 +49,12 @@ fn main() {
     }
 
     for file in &args.input_files[1..] {
-        let layer_file = open(file).expect("could not open layer file").to_rgba8();
+        let top_file = open(file).expect("could not open layer file").to_rgba8();
         let new_dims = in_file.dimensions();
-        let layer_file = resize(&layer_file, new_dims.0, new_dims.1, Lanczos3);
+        let top_file = resize(&top_file, new_dims.0, new_dims.1, Lanczos3);
         in_file = layer_dither(
+            top_file,
             in_file,
-            layer_file,
             create_matrix(args.dims_matrix, args.res_matrix),
         );
     }
@@ -86,7 +90,7 @@ fn black_dither(mut image: RgbaImage, matrix: Vec<Vec<f32>>) -> RgbaImage {
     let msize = matrix.len();
     for (x, y, p) in image.enumerate_pixels_mut() {
         let mp = matrix[x as usize % msize][y as usize % msize];
-        if mp > p.to_luma().0[0] as f32 {
+        if mp < p.to_luma().0[0] as f32 {
             *p = Rgba([0u8, 0u8, 0u8, 255u8]);
         }
     }
@@ -100,7 +104,7 @@ fn layer_dither(mut image: RgbaImage, layer: RgbaImage, matrix: Vec<Vec<f32>>) -
     let msize = matrix.len();
     for (x, y, p) in image.enumerate_pixels_mut() {
         let mp = matrix[x as usize % msize][y as usize % msize];
-        if mp > p.to_luma().0[0] as f32 {
+        if mp < p.to_luma().0[0] as f32 {
             let lp = layer.get_pixel(x, y);
             *p = *lp;
         }
